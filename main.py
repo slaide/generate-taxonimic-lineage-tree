@@ -2,7 +2,7 @@ from ete3 import NCBITaxa
 ncbi = NCBITaxa()
 
 class TreeNode:
-    def __init__(self, name, taxid):
+    def __init__(self, name:str, taxid:str):
         self.name = name
         self.taxid = taxid
         self.children = {}
@@ -14,18 +14,18 @@ class TreeNode:
     def __repr__(self):
         return f"{self.name} ({self.taxid})"
 
-def insert_lineage(root, lineage, names):
-    current_node = root
-    for taxid in lineage[1:]:  # skip root as it's already created
-        if taxid not in current_node.children:
-            new_node = TreeNode(names[taxid], taxid)
-            current_node.add_child(new_node)
-        current_node = current_node.children[taxid]
+    def insert_lineage(self, lineage, names):
+        current_node = self
+        for taxid in lineage[1:]:  # skip root as it's already created
+            if taxid not in current_node.children:
+                new_node = TreeNode(names[taxid], taxid)
+                current_node.add_child(new_node)
+            current_node = current_node.children[taxid]
 
-def print_tree(node, depth=0):
-    print("  " * depth + str(node))
-    for child in node.children.values():
-        print_tree(child, depth + 1)
+    def print(self, depth=0):
+        print("  " * depth + str(self))
+        for child in self.children.values():
+            child.print(depth + 1)
 
 species_names = [
     'Dendroctonus ponderosae', 'Anoplophora glabripennis', 'Leptinotarsa decemlineata', 
@@ -52,7 +52,7 @@ for species in species_names:
 
 # Insert lineages into the tree
 for species, lineage in lineages.items():
-    insert_lineage(root, lineage, names)
+    root.insert_lineage(lineage, names)
 
 # Print the tree
-print_tree(root)
+root.print()
